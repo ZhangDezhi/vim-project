@@ -26,7 +26,7 @@ set cpo&vim
 " With the optional |bang| (!), reset all cached information.
 "
 " See |templator#Setup()| for details.
-command! -bang -complete=customlist,templator#Complete -nargs=+ Templator if !empty('<bang>') | call templator#Reset() | endif | call templator#Setup(<f-args>)
+command! -bang -complete=customlist,templator#Complete -nargs=+ Project if !empty('<bang>') | call templator#Reset() | endif | call templator#Setup(<f-args>)
 
 
 let &cpo = s:save_cpo

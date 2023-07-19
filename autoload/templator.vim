@@ -55,8 +55,8 @@ function! templator#Complete(ArgLead, CmdLine, CursorPos) "{{{3
 endf
 
 
-" Create files based on the template set referred to by the basename of 
-" the name argument.
+" Create files based on the template set referred to by the basename of  the name argument.
+" 根据 name 参数中的 basename 所指向的模板集创建文件。
 function! templator#Setup(name, ...) "{{{3
     let args = s:ParseArgs(a:000)
     let [tname, dirname] = s:GetDirname(a:name)
@@ -81,9 +81,33 @@ function! templator#Setup(name, ...) "{{{3
             call s:EnsureSubDir(dirname, subdir, args, templator_dir_len)
         endfor
         for filename in templator.files
+            " let extension = expand('%:e')
+            " echo extension
+            " if  extension == expand('txt')
+            "     echo "**********************"
+            " else
+            "     echo "--------------------------1"
+            "     echo filename
+            "     echo dirname
+            "     echo outfile
+            " endif
+
             let outfile = s:GetOutfile(dirname, filename, args, templator_dir_len)
             let includefilename_args['__FILE__'] = filename
             let includefilename_args['__FILENAME__'] = outfile
+
+            " let extension = expand('%:e')
+            " echo extension
+            " if  extension == expand('txt')
+            "     echo "**********************"
+            " else
+            "     echo "--------------------------1"
+            "     echo filename
+            "     echo dirname
+            "     echo outfile
+            " endif
+
+
             if s:RunHook('', tname, 'IncludeFilename', includefilename_args, 1)
                 call s:SetDir(dirname)
                 " TLogVAR filename
@@ -98,20 +122,52 @@ function! templator#Setup(name, ...) "{{{3
                         let b:noquickfixsigns = 1
                     endif
                 else
-                    let lines = readfile(filename)
-                    if writefile(lines, outfile) != -1
-                        let fargs = copy(args)
-                        let fargs.filename = outfile
-                        if !s:RunHook('', tname, 'Edit', args)
-                            exec g:templator#edit_new fnameescape(outfile)
+                    if  stridx(filename, ".ico") >= 0 || stridx(filename, ".jpeg") >= 0 || stridx(filename, ".png") >= 0 
+
+                        echo "**********************"
+                        let fstr=join([filename, outfile], " ")
+                        let cmdstr=join(["cp",fstr], " ")
+                        call system(cmdstr)
+                    elseif stridx(filename, ".ncb") >= 0 
+                        echo "**********************"
+                        let fstr=join([filename, outfile], " ")
+                        let cmdstr=join(["cp",fstr], " ")
+                        call system(cmdstr)
+                    elseif stridx(filename, ".dsp") >= 0 
+                        echo "**********************"
+                        let fstr=join([filename, outfile], " ")
+                        let cmdstr=join(["cp",fstr], " ")
+                        call system(cmdstr)
+                    elseif stridx(filename, ".opt") >= 0 || stridx(filename, ".pch") >= 0 || stridx(filename, ".obj") >= 0 
+                        echo "**********************"
+                        let fstr=join([filename, outfile], " ")
+                        let cmdstr=join(["cp",fstr], " ")
+                        call system(cmdstr)
+                    elseif stridx(filename, ".dsw") >= 0 || stridx(filename, ".idb") >= 0  || stridx(filename, ".pdb") >= 0 
+                        " if  stridx(filename, ".ico") >= 0 || stridx(filename, ".ncb") >= 0 || stridx(filename, ".opt") >= 0 || sstridx(filename, ".dsw") >= 0 || stridx(filename, ".pch") >= 0 || stridx(filename, ".pdb") >= 0  || stridx(filename, ".idb") >= 0
+                        echo "**********************"
+                        let fname=join(["\"", "\""], filename)
+                        let outstr=join(["\"", "\""], outfile)
+                        let fstr=join([fname, outstr], " ")
+                        let cmdstr=join(["cp",fstr], " ")
+                        call system(cmdstr)
+                    else
+                        let lines = readfile(filename)
+                        if writefile(lines, outfile) != -1
+                            let fargs = copy(args)
+                            let fargs.filename = outfile
+                            if !s:RunHook('', tname, 'Edit', args)
+                                exec g:templator#edit_new fnameescape(outfile)
+                            endif
+                            let b:noquickfixsigns = 1
+                            let b:templator_args = args
+                            call templator#expander#{ttype}#Expand()
+                            call s:RunHook(&acd ? '' : expand('%:p:h'), tname, 'Buffer', args)
+                            unlet! b:templator_args
+                            update
                         endif
-                        let b:noquickfixsigns = 1
-                        let b:templator_args = args
-                        call templator#expander#{ttype}#Expand()
-                        call s:RunHook(&acd ? '' : expand('%:p:h'), tname, 'Buffer', args)
-                        unlet! b:templator_args
-                        update
                     endif
+
                 endif
             endif
             unlet! b:noquickfixsigns
@@ -130,7 +186,8 @@ endf
 
 function! s:GetAllTemplators() "{{{3
     if !exists('s:templators') || &rtp != s:templators_rtp
-        let files = split(globpath(&rtp, 'templator/*.*'), '\n')
+        let files = split(globpath(&rtp, 'project/*.*'), '\n')
+        " let files = split(globpath(&rtp, 'templator/*.*'), '\n')
         let s:templators = {}
         let s:templators_rtp = &rtp
         for dirname in files
