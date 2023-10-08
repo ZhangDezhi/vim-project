@@ -138,7 +138,7 @@ function! templator#Setup(name, ...) "{{{3
                         let fstr=join([filename, outfile], " ")
                         let cmdstr=join(["cp",fstr], " ")
                         call system(cmdstr)
-                    elseif stridx(filename, ".opt") >= 0 || stridx(filename, ".pch") >= 0 || stridx(filename, ".obj") >= 0 
+                    elseif stridx(filename, ".opt") >= 0 || stridx(filename, ".aps") >= 0 || stridx(filename, ".pch") >= 0 || stridx(filename, ".obj") >= 0 
                         echo "**********************"
                         let fstr=join([filename, outfile], " ")
                         let cmdstr=join(["cp",fstr], " ")
