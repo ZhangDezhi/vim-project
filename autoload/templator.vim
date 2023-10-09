@@ -122,8 +122,7 @@ function! templator#Setup(name, ...) "{{{3
                         let b:noquickfixsigns = 1
                     endif
                 else
-                    if  stridx(filename, ".ico") >= 0 || stridx(filename, ".jpeg") >= 0 || stridx(filename, ".png") >= 0 
-
+                    if  stridx(filename, ".jpeg") >= 0 || stridx(filename, ".png") >= 0 
                         echo "**********************"
                         let fstr=join([filename, outfile], " ")
                         let cmdstr=join(["cp",fstr], " ")
@@ -133,25 +132,27 @@ function! templator#Setup(name, ...) "{{{3
                         let fstr=join([filename, outfile], " ")
                         let cmdstr=join(["cp",fstr], " ")
                         call system(cmdstr)
-                    elseif stridx(filename, ".dsp") >= 0 
+                    elseif stridx(filename, ".aps") >= 0 
                         echo "**********************"
                         let fstr=join([filename, outfile], " ")
                         let cmdstr=join(["cp",fstr], " ")
                         call system(cmdstr)
-                    elseif stridx(filename, ".opt") >= 0 || stridx(filename, ".aps") >= 0 || stridx(filename, ".pch") >= 0 || stridx(filename, ".obj") >= 0 
+                    elseif stridx(filename, ".opt") >= 0  || stridx(filename, ".pch") >= 0 || stridx(filename, ".obj") >= 0  
                         echo "**********************"
                         let fstr=join([filename, outfile], " ")
                         let cmdstr=join(["cp",fstr], " ")
                         call system(cmdstr)
-                    elseif stridx(filename, ".dsw") >= 0 || stridx(filename, ".idb") >= 0  || stridx(filename, ".pdb") >= 0 
-                        " if  stridx(filename, ".ico") >= 0 || stridx(filename, ".ncb") >= 0 || stridx(filename, ".opt") >= 0 || sstridx(filename, ".dsw") >= 0 || stridx(filename, ".pch") >= 0 || stridx(filename, ".pdb") >= 0  || stridx(filename, ".idb") >= 0
+                    elseif  stridx(filename, ".idb") >= 0  || stridx(filename, ".pdb") >= 0 || stridx(filename, ".ico") >= 0
                         echo "**********************"
-                        let fname=join(["\"", "\""], filename)
-                        let outstr=join(["\"", "\""], outfile)
+                        let fname1 = substitute(filename,'\$', '\\$', 'g' )
+                        let fname=join(["\"", "\""], fname1)
+                        let outstr1 = substitute(outfile,   '\$', '\\$', 'g' )
+                        let outstr=join(["\"", "\""], outstr1)
                         let fstr=join([fname, outstr], " ")
                         let cmdstr=join(["cp",fstr], " ")
                         call system(cmdstr)
                     else
+                        
                         let lines = readfile(filename)
                         if writefile(lines, outfile) != -1
                             let fargs = copy(args)
